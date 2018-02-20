@@ -1,7 +1,7 @@
 import sqlite3
 from flask_restful import Resource, reqparse
 
-class User:
+class User(Resource):
     def __init__(self, _id, username, password):
         self.id = _id
         self.username = username
@@ -9,13 +9,14 @@ class User:
 
     @classmethod
     def find_by_username(cls, username):
+
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
         query = 'SELECT * from users WHERE username=?'
+
         result = cursor.execute(query, (username,))
         row = result.fetchone()
-
         if row:
             user = cls(*row)
         else:
@@ -30,7 +31,7 @@ class User:
         cursor = connection.cursor()
 
         query = 'SELECT * from users WHERE id=?'
-        result = cursor.execute(query, (username,))
+        result = cursor.execute(query, (_id,))
         row = result.fetchone()
 
         if row:
@@ -61,7 +62,7 @@ class UserRegister(Resource):
 
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
-        
+
         query = "INSERT INTO users VALUES (null, ?, ?)"
         cursor.execute(query, (data['username'], data['password']))
 
